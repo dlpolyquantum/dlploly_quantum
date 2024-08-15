@@ -31,7 +31,8 @@ c***********************************************************************
       use three_body_module
       use utility_module
       use vdw_module
-      
+      use fqcmd_module
+
       contains
       
       subroutine force_manager
@@ -45,7 +46,8 @@ c***********************************************************************
      x  rcuttb,engtbp,virtbp,rcutfb,engfbp,virfbp,rctter,engter,
      x  virter,engbnd,virbnd,engang,virang,engdih,virdih,enginv,
      x  virinv,engtet,virtet,engshl,shlke,virshl,engfld,virfld,
-     x  engcfg,fmax,temp,engord,virord,engrng,virrng,qmsbnd,keyens)
+     x  engcfg,fmax,temp,engord,virord,engrng,virrng,qmsbnd,keyens,
+     x  lfqcmd)
       
 c*********************************************************************
 c     
@@ -58,11 +60,11 @@ c
 c*********************************************************************
       
       use pimd_module, only : ring_forces,ring_energy
-      
+
       implicit none
       
       logical newlst,lneut,lnsq,lgofr,lzeql,loglnk,lfcap,lsolva
-      logical lfree,lghost,llsolva,lpimd,safe
+      logical lfree,lghost,llsolva,lpimd,lfqcmd,safe
       
       integer idnode,mxnode,natms,imcon,nstep,nstbgr,nsteql,numrdf
       integer keyfce,kmax1,kmax2,kmax3,nhko,nlatt,ntpvdw,ntpmet,ksatms
@@ -583,11 +585,17 @@ c     calculate ring forces for pimd option
         endif
 c        write(6,*)"engrng",engrng
       endif
+     
+      if(lfqcmd.and.(.not.lpimd))then
+        call fqcmd_correct_force(idnode,mxnode,imcon,natms,
+     x  engsrp)
+      endif 
       
 c     global summation of force arrays (basic replicated data strategy)
       
       numatm=nbeads*natms
       call global_sum_forces(numatm,mxnode,fxx,fyy,fzz)
+c       write(*,*) "fxx after ", fxx(:)
       
 c     global sum of stress arrays
       

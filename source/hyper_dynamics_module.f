@@ -797,7 +797,7 @@ c***********************************************************************
       implicit none
 
       logical lfcap,nogofr,lneut,lnsq,loglnk,stropt,lzeql
-      logical newlst,ltad,lsolva,lfree,lexcite,lpimd
+      logical newlst,ltad,lsolva,lfree,lexcite,lpimd,lfqcmd
 
       integer idnode,imcon,keyfce,keyfld,keyshl,keytol,nbeads
       integer keystr,kmax1,kmax2,kmax3,multt,mxnode,natms,ngrp
@@ -833,6 +833,7 @@ c     control variables
 c     dummy variables
       
       lpimd=.false.
+      lfqcmd=.false.
       lsolva=.false.
       lfree=.false.
       lexcite=.false.
@@ -869,7 +870,8 @@ c     calculate atomic forces
      x    rcuttb,engtbp,virtbp,rcutfb,engfbp,virfbp,rctter,engter,
      x    virter,engbnd,virbnd,engang,virang,engdih,virdih,enginv,
      x    virinv,engtet,virtet,engshl,shlke,virshl,engfld,virfld,
-     x    engcfg,fmax,temp,engord,virord,engrng,virrng,qmsbnd,keyens)
+     x    engcfg,fmax,temp,engord,virord,engrng,virrng,qmsbnd,keyens,
+     x    lfqcmd)
         
 c     frozen atoms option
         
@@ -1671,7 +1673,7 @@ c***********************************************************************
       implicit none
       
       logical newlst,lneut,lnsq,nogofr,lzeql,loglnk,lfcap,ltad
-      logical lsolva,lfree,lexcite,lpimd
+      logical lsolva,lfree,lexcite,lpimd,lfqcmd
       integer idnode,mxnode,natms,imcon,nstbgr,nsteql,mstep
       integer numrdf,keyfce,kmax1,kmax2,kmax3,nhko,nlatt,ntpvdw
       integer ntpmet,nospl,multt,nneut,ntptbp,ntpfbp,ntpter,keyshl
@@ -1694,6 +1696,7 @@ c***********************************************************************
 c     dummy variables
       
       lpimd=.false.
+      lfqcmd=.false.
       lsolva=.false.
       lfree=.false.
       lexcite=.false.
@@ -1755,7 +1758,8 @@ c     calculate atomic forces for one chain configuration
      x    rcuttb,engtbp,virtbp,rcutfb,engfbp,virfbp,rctter,engter,
      x    virter,engbnd,virbnd,engang,virang,engdih,virdih,enginv,
      x    virinv,engtet,virtet,engshl,shlke,virshl,engfld,virfld,
-     x    engcfg,fmax,temp,engord,virord,engrng,virrng,qmsbnd,keyens)
+     x    engcfg,fmax,temp,engord,virord,engrng,virrng,qmsbnd,keyens,
+     x    lfqcmd)
         
 c     store configuration energy of chain configuration
         

@@ -46,23 +46,7 @@ c     copyright M.R.Momeni and F.A.Shakib 2021
 c     
 c     Method Development and Materials Simulation Laboratory
 c
-c     Dil Limbu and Nathan London have added the following modules
-c     and subroutines to the DL_POLY QUANTUM VERSION 1.0 to introduce
-c     additional PI simulation methods and correlation function 
-c     calculations
-c
-c     correlation_module.f
-c     pimd_piglet_module.f
-c     Additional subroutines in pimd_module.f
-c     Additional subroutines in vv_pimd_modeule.f
-c     Additional changes in define_system_module.f and setup_module.f
-c       for CONTROL file reading
-c
-c     copyright - Dil Limbu and Nathan London
-c     authors - Dil Limbu and Nathan London 2023
-c
-c      
-c                         DL_POLY QUANTUM VERSION 2.0
+c                         DL_POLY QUANTUM VERSION 1.0
 c
 c***********************************************************************
       
@@ -108,7 +92,8 @@ c     declare required modules
       use water_module
       use correlation_module
       use pimd_piglet_module
-      
+      use fqcmd_module
+
       implicit none
       
       character*1 hms,dec
@@ -120,7 +105,7 @@ c     declare required modules
       logical stropt,lzero,nolink,newgau,lminim,lminnow,lhit,lbpd
       logical prechk,tadall,lexcite,lsolva,lfree,lfrmas,lswitch
       logical lghost,llswitch,lnfic,nebgo,lpsoc,redirect,lpimd
-      logical inhc,lmsite,lcorr
+      logical inhc,lmsite,lcorr,lfqcmd
       
       integer npage,lines,idnode,mxnode,memr,intsta,istraj,nsbzdn
       integer keyens,keyfce,keyres,keytrj,kmax1,kmax2,kmax3,multt
@@ -223,9 +208,9 @@ c     input the control parameters defining the simulation
      x  (seek,lfcap,lgofr,lnsq,loptim,lzero,lminim,lpgr,ltraj,ltscal,
      x  lzeql,lzden,nolink,newgau,lhit,lbpd,ltad,lneb,prechk,tadall,
      x  lsolva,lfree,lfrmas,lexcite,lswitch,lghost,lnfic,nebgo,lpsoc,
-     x  lpimd,inhc,lmsite,lcorr,idnode,minstp,intsta,istraj,keybpd,
-     x  keyens,keyfce,keyres,keyver,keytrj,keycorr,molcorr,wrtcorr,
-     x  kmax1,kmax2,
+     x  lpimd,inhc,lmsite,lcorr,lfqcmd,idnode,minstp,intsta,istraj,
+     x  keybpd,keyens,keyfce,keyres,keyver,keytrj,keycorr,molcorr,
+     x  wrtcorr,kmax1,kmax2,
      x  kmax3,multt,nstack,nstbgr,nsbzdn,nstbpo,nhko,nlatt,nstbts,
      x  nsteql,nstraj,nstrun,nospl,keytol,numgau,khit,nhit,nblock,
      x  ntrack,blkout,numneb,mode,nsolva,isolva,nofic,nbeads,nchain,
@@ -391,11 +376,32 @@ c     convert BPD parameters to internal units
         vmin=0.5d0*boltz*degfre*vmin
         
       endif
-      
+
+
 c     time check
 
       call timchk(1,tzero)
       
+c      numPot=3
+c      numPoints=847
+c      write(*,*) fxx(:)
+c      write(*,*) "engbnd ", engbnd
+c      call allocate_fqcmd_arrays(idnode,mxnode)
+c      call read_pot_tables(idnode,mxnode)
+c      write(*,*) "fqcmd test start"
+      nqcbnd=1
+      nqcang=1
+      if(lfqcmd) then
+        call fqcmd_setup(idnode,mxnode,natms,
+     x  ntbond,ntangl,ntpatm,lpimd)
+      endif
+c      if(lfqcmd.and.nstep.gt.nsteql) then
+c      if(lfqcmd) then
+c        call  get_qcent_internal(idnode,mxnode,imcon,natms,
+c     x  ntbond,ntangl,ntpmls,rcut)
+c        call get_qcent_cart(idnode,mxnode,imcon,
+c     x  ntpmls,natms,ntbond,rcut,lpimd)
+c      endif
 c     control variable for structure optimizer
       
       keystr=0
@@ -418,7 +424,7 @@ c     first step of minimisation programme
      x    rcut,rcutfb,rcuttb,rprim,rvdw,shlke,engcfg,temp,tstep,
      x    virang,virbnd,vircpe,virdih,virfbp,virfld,virinv,virlrc,
      x    virmet,virshl,virsrp,virtbp,virter,virtet,volm,engmet,
-     x    virtot,sigma,tolnce,engunit,engord,virord)
+     x    virtot,sigma,tolnce,engunit,engord,virord,lfqcmd)
         
       elseif((lpimd.or.keyver.gt.0).and.nstep.eq.0)then
         
@@ -437,7 +443,7 @@ c     calculate initial conditions for velocity verlet
      x    rprim,rvdw,shlke,engcfg,temp,tstep,virang,virbnd,vircpe,
      x    virdih,virfbp,virfld,virinv,virlrc,virmet,virshl,virsrp,
      x    virtbp,virter,virtet,volm,engmet,virtot,engord,virord,
-     x    engrng,virrng,qmsbnd,keyens)
+     x    engrng,virrng,qmsbnd,keyens,lfqcmd)
        
 c     bias potential dynamics option - reset forces
         
@@ -465,6 +471,21 @@ c     stage initial forces for pimd
         call qt4_force_redist(idnode,mxnode,nbeads,ntpmls,g_qt4f) 
 
       endif
+      
+c      numPot=3
+c      numPoints=847
+c      write(*,*) fxx(:)
+c      write(*,*) "engbnd ", engbnd
+c      call allocate_fqcmd_arrays(idnode,mxnode)
+c      call read_pot_tables(idnode,mxnode)
+c      write(*,*) "fqcmd test start"
+c      call fqcmd_setup(idnode,mxnode,ntpatm)
+c      call test_interp(imcon,natms)
+c      call fqcmd_correct_force(idnode,mxnode,imcon,natms,
+c     x  engsrp,engcfg)
+c      write(*,*) fxx(:)
+c      write(*,*) "xxx ",xxx(:)
+c      write(*,*) "engbnd ", engbnd
 
       if(ltad.or.(lbpd.and.keybpd.eq.2))then
         
@@ -525,6 +546,7 @@ c     bypass the MD cycle for this option
         call corr_init(idnode,mxnode,natms,ntpmls,molcorr,keyens,
      x    keycorr,nummols,numsit)
       endif
+      
 c***********************************************************************
 c     start of molecular dynamics calculations
 c***********************************************************************
@@ -702,7 +724,7 @@ c     scale t=0 tether reference positions (constant pressure only)
      x      rcut,rcutfb,rcuttb,rprim,rvdw,shlke,engcfg,temp,tstep,
      x      virang,virbnd,vircpe,virdih,virfbp,virfld,virinv,virlrc,
      x      virmet,virshl,virsrp,virtbp,virter,virtet,volm,engmet,
-     x      virtot,sigma,tolnce,engunit,engord,virord)
+     x      virtot,sigma,tolnce,engunit,engord,virord,lfqcmd)
           
         elseif(loptim.or.keyshl.ne.2)then
           
@@ -720,7 +742,7 @@ c     scale t=0 tether reference positions (constant pressure only)
      x      engcfg,temp,tstep,virang,virbnd,vircpe,virdih,
      x      virfbp,virfld,virinv,virlrc,virmet,virshl,virsrp,
      x      virtbp,virter,virtet,volm,engmet,virtot,engord,virord,
-     x      engrng,virrng,qmsbnd,keyens)
+     x      engrng,virrng,qmsbnd,keyens,lfqcmd)
           
         else
           
@@ -736,7 +758,7 @@ c     scale t=0 tether reference positions (constant pressure only)
      x      rprim,rvdw,shlke,engcfg,temp,tstep,virang,virbnd,vircpe,
      x      virdih,virfbp,virfld,virinv,virlrc,virmet,virshl,virsrp,
      x      virtbp,virter,virtet,volm,engmet,virtot,rlxtol,pass0,
-     x      pass1,pass2,engord,virord)
+     x      pass1,pass2,engord,virord,lfqcmd)
           
         endif
         
@@ -745,7 +767,10 @@ c     stage forces for pimd
      x               mxnode,natms,nbeads, ntpmls,g_qt4f)
         if(lpimd.and.(keyens.ge.43))call force2norm(lmsite,idnode,
      x               mxnode,natms,nbeads,ntpmls,g_qt4f)
-        
+c      call fqcmd_correct_force(idnode,mxnode,imcon,natms,
+c     x  engsrp,engcfg)
+c      write(*,*) "xxx ",xxx(:)
+c      write(*,*) "engbnd ", engbnd
         
 c     bias potential dynamics option - reset forces
         
@@ -930,6 +955,13 @@ c     calculate correlation function
      x      (idnode,mxnode,natms,ntpmls,molcorr,keyens,keycorr,nstep,
      x      nummols,numsit,tstep) 
         endif
+      
+      if(lfqcmd.and.nstep.gt.nsteql) then
+        call  get_qcent_internal(idnode,mxnode,imcon,natms,
+     x  ntbond,ntangl,ntpmls,rcut)
+        call get_qcent_cart(idnode,mxnode,imcon,
+     x  ntpmls,natms,ntbond,rcut,lpimd)
+      endif
 
 c     calculate physical quantities
         
@@ -1147,7 +1179,11 @@ c     write pimd thermostats file
         if(keyens.eq.41)call save_rnd_cfg(idnode,mxnode,uuu)
         
       endif
-      
+     
+      if(lfqcmd) then 
+      call write_fqcmd_rdfs(idnode,mxnode,nsteql,nstrun,rcut,volm,
+     x  temp,lpimd)
+      endif
 c     close output channels
       
       if(idnode.eq.0)then
@@ -1162,6 +1198,7 @@ c     close output channels
 
       endif
       
+c      call dealloc_fqcmd_arrays(idnode,mxnode)      
 c     terminate job
       
       call exitcomms()

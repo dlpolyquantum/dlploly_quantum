@@ -33,7 +33,8 @@ c***********************************************************************
      x  epsq,fmax,opttol,rctter,rcut,rcutfb,rcuttb,rprim,rvdw,shlke,
      x  engcfg,temp,tstep,virang,virbnd,vircpe,virdih,virfbp,virfld,
      x  virinv,virlrc,virmet,virshl,virsrp,virtbp,virter,virtet,volm,
-     x  engmet,virtot,engord,virord,engrng,virrng,qmsbnd,keyens)
+     x  engmet,virtot,engord,virord,engrng,virrng,qmsbnd,keyens,
+     x  lfqcmd)
       
 c***********************************************************************
 c     
@@ -50,7 +51,8 @@ c***********************************************************************
       
       logical lfcap,lgofr,lneut,lnsq,loglnk,loptim,lzeql,lzero
       logical newlst,stropt,cycle,ltad,lsolva,lfree,lghost,lpimd
-      
+      logical lfqcmd
+
       integer idnode,imcon,keyfce,keyfld,keyshl,keytol,ntcons
       integer keystr,kmax1,kmax2,kmax3,multt,mxnode,natms,ngrp
       integer nhko,nlatt,nneut,nospl,nscons,nstbgr,nstep,nsteql
@@ -87,7 +89,8 @@ c     calculate atomic forces
      x  rcuttb,engtbp,virtbp,rcutfb,engfbp,virfbp,rctter,engter,
      x  virter,engbnd,virbnd,engang,virang,engdih,virdih,enginv,
      x  virinv,engtet,virtet,engshl,shlke,virshl,engfld,virfld,
-     x  engcfg,fmax,temp,engord,virord,engrng,virrng,qmsbnd,keyens)
+     x  engcfg,fmax,temp,engord,virord,engrng,virrng,qmsbnd,keyens,
+     x  lfqcmd)
       
 c     frozen atoms option
       
@@ -130,7 +133,7 @@ c     for npt routines     note: virsrp already includes virlrc
      x  rprim,rvdw,shlke,engcfg,temp,tstep,virang,virbnd,vircpe,
      x  virdih,virfbp,virfld,virinv,virlrc,virmet,virshl,virsrp,
      x  virtbp,virter,virtet,volm,engmet,virtot,rlxtol,pass0,
-     x  pass1,pass2,engord,virord)
+     x  pass1,pass2,engord,virord,lfqcmd)
       
 c***********************************************************************
 c     
@@ -147,7 +150,7 @@ c***********************************************************************
 
       logical,save :: lfirst = .true.
       logical lfcap,lgofr,lneut,lnsq,loglnk,lzeql,ltad,lpimd
-      logical newlst,relaxed,shgofr,lsolva,lfree,lghost
+      logical newlst,relaxed,shgofr,lsolva,lfree,lghost,lfqcmd
 
       integer idnode,imcon,keyfce,keyfld,keyshl,nbeads
       integer kmax1,kmax2,kmax3,multt,mxnode,natms,l1,l2
@@ -228,7 +231,8 @@ c     calculate atomic forces
      x    rcuttb,engtbp,virtbp,rcutfb,engfbp,virfbp,rctter,engter,
      x    virter,engbnd,virbnd,engang,virang,engdih,virdih,enginv,
      x    virinv,engtet,virtet,engshl,shlke,virshl,engfld,virfld,
-     x    engcfg,fmax,temp,engord,virord,engrng,virrng,qmsbnd,keyens)
+     x    engcfg,fmax,temp,engord,virord,engrng,virrng,qmsbnd,keyens,
+     x    lfqcmd)
         
 c     frozen atoms option
         
@@ -291,7 +295,7 @@ c     store vector connecting the cores to the shells
      x  rcut,rcutfb,rcuttb,rprim,rvdw,shlke,engcfg,temp,tstep,
      x  virang,virbnd,vircpe,virdih,virfbp,virfld,virinv,virlrc,
      x  virmet,virshl,virsrp,virtbp,virter,virtet,volm,engmet,
-     x  virtot,sigma,tolnce,engunit,engord,virord)
+     x  virtot,sigma,tolnce,engunit,engord,virord,lfqcmd)
       
 c***********************************************************************
 c     
@@ -308,7 +312,8 @@ c***********************************************************************
 
       logical lfcap,lneut,lnsq,loglnk,lzeql,newlst,stropt,shgofr
       logical conopt,newjob,ltad,lsolva,lfree,lghost,lpimd,safe
-      
+      logical lfqcmd
+
       integer idnode,imcon,keyfce,keyfld,keyshl,keystr,pass,i
       integer kmax1,kmax2,kmax3,multt,mxnode,natms,ngrp,keytol
       integer nhko,nlatt,nneut,nospl,nscons,nstbgr,nstep,nsteql
@@ -388,7 +393,8 @@ c     calculate atomic forces
      x    rcuttb,engtbp,virtbp,rcutfb,engfbp,virfbp,rctter,engter,
      x    virter,engbnd,virbnd,engang,virang,engdih,virdih,enginv,
      x    virinv,engtet,virtet,engshl,shlke,virshl,engfld,virfld,
-     x    engcfg,fmax,temp,engord,virord,engrng,virrng,qmsbnd,keyens)
+     x    engcfg,fmax,temp,engord,virord,engrng,virrng,qmsbnd,keyens,
+     x    lfqcmd)
         
 c     frozen atoms option
         

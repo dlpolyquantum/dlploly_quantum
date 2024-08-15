@@ -27,14 +27,15 @@ OBJ_MOD = parse_module.o setup_module.o error_module.o \
 	metal_module.o nhc_module.o ensemble_tools_module.o \
 	temp_scalers_module.o three_body_module.o spme_module.o \
 	tersoff_module.o neu_coul_module.o \
-	nlist_builders_module.o forces_module.o \
+	nlist_builders_module.o \
+	correlation_module.o fqcmd_module.o forces_module.o \
 	lf_motion_module.o lf_rotation1_module.o \
 	lf_rotation2_module.o vv_motion_module.o \
 	pimd_piglet_module.o \
 	vv_rotation1_module.o vv_rotation2_module.o vv_pimd_module.o\
 	pmf_module.o integrator_module.o optimiser_module.o \
 	hyper_dynamics_module.o driver_module.o \
-	define_system_module.o correlation_module.o
+	define_system_module.o 
 
 OBJ_SRC = dlpoly.o
 
