@@ -178,6 +178,7 @@ c**********************************************************************
       real(8) engke,tmpscl,tmpold
       real(8) strkin(9),uuu(102)
       real(8) freq,rand
+      real(8) rsq
 
       iatm0=nbeads*((idnode*natms)/mxnode)
       iatm1=nbeads*(((idnode+1)*natms)/mxnode)
@@ -269,6 +270,22 @@ c     initialise pimd thermostats
 c     set starting momenta
         
         call gauss(natms*nbeads,vxx,vyy,vzz)
+
+cccc added during x2.1 version        
+        do i=1,natms*nbeads
+            
+          if(weight(i).lt.1.d-6)then
+            rsq = 0.d0 
+          else
+            rsq=sqrt(1.d0/weight(i))
+          endif
+
+          vxx(i)=vxx(i)*rsq
+          vyy(i)=vyy(i)*rsq
+          vzz(i)=vzz(i)*rsq
+            
+        enddo
+
 c     initialise staged momenta
         
         if(keyens.le.42) then 
@@ -300,6 +317,7 @@ c     restore staged momenta for restart
         
 c     read pimd thermostats
         if(keyens.lt.44.or.keyens.eq.62) then
+c        if(keyens.lt.44) then
           call read_thermostats(idnode,mxnode,natms,tmpold)
           if(keyens.eq.41)then
              call read_rnd_cfg(idnode,mxnode,uuu)
@@ -1566,6 +1584,9 @@ c
 c     copyright - daresbury laboratory
 c     author    - w.smith july 2016
 c     
+c     calculate the net system momentum on centroid only
+c     updated on DLPOLY 2.1x version by Dil Limbu,2024
+c     
 c**********************************************************************
       
       implicit none
@@ -1574,43 +1595,62 @@ c**********************************************************************
       real(8), intent(in) :: sigma
       integer i,iatm0,iatm1
       real(8) pmx,pmy,pmz,engke,tscale,ratms
+      real(8) totmas
       
       ratms=dble(nbeads)*dble(natms)
       iatm0=(idnode*natms)/mxnode
       iatm1=((idnode+1)*natms)/mxnode
       
-c     calculate the net system momentum
+c     calculate the net system momentum on centroid only
       
       pmx=0.d0
       pmy=0.d0
       pmz=0.d0
+
+      totmas=0.d0
      
-      do i=1,(iatm1-iatm0)*nbeads
-            
-        pmx=pmx+pxx(i)
-        pmy=pmy+pyy(i)
-        pmz=pmz+pzz(i)
+      do i=1,(iatm1-iatm0)*nbeads,nbeads
+           
+        if(zmass(i).gt.1.d-6)then 
+          pmx=pmx+pxx(i)
+          pmy=pmy+pyy(i)
+          pmz=pmz+pzz(i)
+          totmas=totmas+zmass(i)
+        endif
         
       enddo
       
       buffer(1)=pmx
       buffer(2)=pmy
       buffer(3)=pmz
-      call gdsum(buffer(1),3,buffer(4))
-      pmx=buffer(1)/ratms
-      pmy=buffer(2)/ratms
-      pmz=buffer(3)/ratms
+      buffer(4)=totmas
+      call gdsum(buffer(1),4,buffer(5))
+      totmas=buffer(4)
+c      pmx=buffer(1)/ratms
+c      pmy=buffer(2)/ratms
+c      pmz=buffer(3)/ratms
+      pmx=buffer(1)/totmas
+      pmy=buffer(2)/totmas
+      pmz=buffer(3)/totmas
       
 c     zero net momentum and calculate system kinetic energy
       
       engke=0.d0
       
       do i=1,(iatm1-iatm0)*nbeads
-        
-        pxx(i)=pxx(i)-pmx
-        pyy(i)=pyy(i)-pmy
-        pzz(i)=pzz(i)-pmz
-
+       
+        if(zmass(i).gt.1.d-6)then
+c          pxx(i)=pxx(i)-pmx
+c          pyy(i)=pyy(i)-pmy
+c          pzz(i)=pzz(i)-pmz
+          pxx(i)=pxx(i)-pmx*zmass(i)
+          pyy(i)=pyy(i)-pmy*zmass(i)
+          pzz(i)=pzz(i)-pmz*zmass(i)
+        else
+          pxx(i)=0.d0
+          pyy(i)=0.d0
+          pzz(i)=0.d0
+        endif
         engke=engke+(pxx(i)**2+pyy(i)**2+pzz(i)**2)*rzmass(i)
         
       enddo
@@ -1621,6 +1661,7 @@ c     zero net momentum and calculate system kinetic energy
 c     scale momenta to temperature
       
       tscale=sqrt(sigma/engke)
+
       engke=0.d0
 
       do i=1,(iatm1-iatm0)*nbeads
@@ -1632,9 +1673,10 @@ c     scale momenta to temperature
         engke=engke+(pxx(i)**2+pyy(i)**2+pzz(i)**2)*rzmass(i)/2.d0  
 
       enddo
-      
+
       end subroutine reset_pimd_momenta
-      
+     
+
       subroutine ring_gather(idnode,mxnode,natms)
       
 c**********************************************************************

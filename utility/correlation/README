@@ -3,9 +3,13 @@
 
  Requires FFTW3 package for performing Fourier transform
 
- Authors - Nathan London and Dil Limbu
+ Authors - Nathan London, Dil Limbu, and Md Omar Faruque
 
 Compile using make, ensure FFTW3 package is linked in Makefile
+
+Updated to use dipole derivative in spectra calculations
+-set number of molecules to be 1 when using updated DL_POLY that uses total cell dipole
+  instead of molecular dipoles
 
 Running the program:
 -Required files:

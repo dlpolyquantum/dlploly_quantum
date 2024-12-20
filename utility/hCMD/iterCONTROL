@@ -1,0 +1,45 @@
+DL_POLY Quantum 1.0 PIMD q-TIP4P/F WATER
+
+# PIMD NVT NHC with nbeads=32, nchain=4 and taut=0.1 ps 
+#pimd pile nbeads=32 taut=0.05
+integrator velocity
+ensemble nvt nhc taut=0.05 nrepsa=1 nchain=3
+# invoking qTIP4P/f water potential model
+qtip4pf
+
+# SYSTEM TARGETED TEMPERATURE
+temperature  300.0
+
+# INTEGRATION TIMESTEP
+timestep 0.0002
+
+# SIMULATION LENGTH
+equil		   250000
+steps          500000
+trajectory     251000 1000 1
+
+#restart noscale 
+# OUTPUT
+print          5000
+
+#correlation dipole 1 5
+fqcmd pot=3 points=899 outpts=480 bnd=1 rmax=2.5 ang=1 wrt=100
+
+# OUTPUT
+print          5000
+
+
+# STATISTICS
+stats          5000
+
+# SYSTEM CUTOFFS FOR ELECTROSTATICS AND NON-BONDED
+cutoff         9.0
+rvdw           9.0
+ewald precision 1.0E-6
+delr width      0.5        ! for Verlet list
+
+# EXECUTION TIME
+job time       9999999.0
+close time     20.0
+
+finish

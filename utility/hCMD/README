@@ -1,0 +1,13 @@
+This directory contains example scripts for performing 
+hybrid-centroid molecular dynamics (h-CMD) simulations 
+the system of lithium TFSI in water.
+
+Included are:
+-DL_POLY input files for reference PIMD simulations and
+  classical simulations with corrected potential for both
+  IBI sampling and production runs
+-Automation scripts for setting up IBI iterations and 
+  submitting simulations to HPC clusters using SLURM 
+  schedulers
+-Python script for fitting correction potentials during
+  IBI

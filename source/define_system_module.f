@@ -53,7 +53,8 @@ c***********************************************************************
      x  (seek,lfcap,lgofr,lnsq,loptim,lzero,lminim,lpgr,ltraj,ltscal,
      x  lzeql,lzden,nolink,newgau,lhit,lbpd,ltad,lneb,prechk,tadall,
      x  lsolva,lfree,lfrmas,lexcite,lswitch,lghost,lnfic,nebgo,lpsoc,
-     x  lpimd,inhc,lmsite,lcorr,lfqcmd,idnode,minstp,intsta,istraj,
+     x  lpimd,inhc,lmsite,lcorr,lfqcmd,lfcmd,idnode,minstp,intsta,
+     x  istraj,
      x  keybpd,keyens,keyfce,keyres,keyver,keytrj,keycorr,molcorr,
      x  wrtcorr,kmax1,kmax2,kmax3,multt,nstack,nstbgr,nsbzdn,nstbpo,
      x  nhko,nlatt,nstbts,nsteql,nstraj,nstrun,nospl,keytol,numgau,
@@ -61,7 +62,7 @@ c***********************************************************************
      x  nofic,nbeads,nchain,nrespa,g_qt4f,alpha,delr,epsq,fmax,press,
      x  quattol,rcut,rprim,rvdw,taup,taut,temp,timcls,timjob,tolnce,
      x  tstep,rlxtol,opttol,zlen,ehit,xhit,yhit,zhit,ebias,vmin,
-     x  catchrad,sprneb,deltad,tlow,hyp_units,chi,nsp1)
+     x  catchrad,sprneb,deltad,tlow,hyp_units,chi,nsp1,wrtrdf)
       
 c***********************************************************************
 c     
@@ -86,14 +87,14 @@ c***********************************************************************
       logical lstep,ltemp,lcut,ldelr,lprim,lrfce,lens,novdw,lrvdw,kill
       logical lnsq,lzden,lewald,lspme,lhke,loop,lzero,nolink,newgau
       logical lminim,lminopt,ltad,lneb,lhit,lbpd,prechk,tadall,nebgo
-      logical lpimd,lver,inhc,lmsite,lcorr,lfqcmd
+      logical lpimd,lver,inhc,lmsite,lcorr,lfqcmd,lfcmd
       integer idnode,intsta,istraj,keyens,keyfce,keyres,nstbpo,nsbzdn
       integer keytrj,keycorr,molcorr,wrtcorr,kmax1,kmax2,kmax3,multt
       integer nstack,nstbgr,khit
       integer nhit,nhko,nlatt,nstbts,nsteql,nstraj,nstrun,nospl,ntrack
       integer idum,imcon,keyver,keytol,nblock,blkout,numgau,nbeads
       integer minstp,numneb,i,keybpd,mode,nsolva,isolva,nofic,nchain
-      integer nrespa
+      integer nrespa,wrtrdf
       real(8) alpha,delr,epsq,fmax,press,quattol,rcut,rprim,rvdw,taup
       real(8) taut,temp,timcls,timjob,tolnce,tstep,rlxtol,opttol
       real(8) eps,tol,fm,densvar,delrdf,delzdn,zlen,ehit,hyp_units
@@ -243,6 +244,7 @@ c     temp scaling interval
       lmsite=.false.
       lcorr=.false.
       lfqcmd=.false.
+      lfcmd=.false.
       lver=.false.
       seek='all     '
       
@@ -745,6 +747,10 @@ c     fast-qcmd option
           numPot=intstr(directive,lenrec,idum)
           numPoints=intstr(directive,lenrec,idum)
           nrdfpts=intstr(directive,lenrec,idum)
+          nqcbnd=intstr(directive,lenrec,idum)
+          rmax=dblstr(directive,lenrec,idum)
+          nqcang=intstr(directive,lenrec,idum)
+          wrtrdf=intstr(directive,lenrec,idum)
           if(idnode.eq.0)then
             write(nrite,"(/,1x,'Performing f-QCMD')")
             write(nrite,"(/,1x,'Number of non-bonded tables:',i5)")
@@ -753,6 +759,38 @@ c     fast-qcmd option
      x        numPoints
             write(nrite,"(/,1x,'Number of points in output rdfs:',i5)")
      x        nrdfpts
+            write(nrite,"(/,1x,'Number of unique bonds:',i5)")
+     x        nqcbnd
+            write(nrite,"(/1x,'Bond histogram max:',
+     x          1p,e12.4)")rmax
+            write(nrite,"(/,1x,'Number of unique angles:',i5)")
+     x        nqcang
+          endif
+c     fast-cmd option
+        elseif(findstring('fcmd',directive,idum))then
+          lfqcmd=.true.
+          lfcmd=.true.
+          numPot=intstr(directive,lenrec,idum)
+          numPoints=intstr(directive,lenrec,idum)
+          nrdfpts=intstr(directive,lenrec,idum)
+          nqcbnd=intstr(directive,lenrec,idum)
+          rmax=dblstr(directive,lenrec,idum)
+          nqcang=intstr(directive,lenrec,idum)
+          wrtrdf=intstr(directive,lenrec,idum)
+          if(idnode.eq.0)then
+            write(nrite,"(/,1x,'Performing f-CMD')")
+            write(nrite,"(/,1x,'Number of non-bonded tables:',i5)")
+     x        numPot
+            write(nrite,"(/,1x,'Number of points in tables:',i5)")
+     x        numPoints
+            write(nrite,"(/,1x,'Number of points in output rdfs:',i5)")
+     x        nrdfpts
+            write(nrite,"(/,1x,'Number of unique bonds:',i5)")
+     x        nqcbnd
+            write(nrite,"(/1x,'Bond histogram max:',
+     x          1p,e12.4)")rmax
+            write(nrite,"(/,1x,'Number of unique angles:',i5)")
+     x        nqcang
           endif
        elseif(findstring('impact',directive,idum))then
           

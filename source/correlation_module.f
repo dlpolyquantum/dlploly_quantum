@@ -81,9 +81,11 @@ c     write initial value to file
       if(idnode.eq.0)then
         
         write(corr,'(1e14.6)') 0.d0
-        do i=1,nummols(itmols)
-          write(corr,'(3e14.6)') xoper(i),yoper(i),zoper(i)
-        enddo
+c        do i=1,nummols(itmols)
+c          write(corr,'(3e14.6)') xoper(i),yoper(i),zoper(i)
+c        enddo
+          write(corr,'(3e14.6)') sum(xoper(:)),sum(yoper(:)),
+     x      sum(zoper(:))
          
       endif
       
@@ -122,9 +124,11 @@ c     write value of operator to file
       if(idnode.eq.0)then
          
         write(corr,'(1e14.6)') nstep*tstep
-        do i=1,nummols(itmols)
-          write(corr,'(3e14.6)') xoper(i),yoper(i),zoper(i)
-        enddo
+c        do i=1,nummols(itmols)
+c          write(corr,'(3e14.6)') xoper(i),yoper(i),zoper(i)
+c        enddo
+          write(corr,'(3e14.6)') sum(xoper(:)),sum(yoper(:)),
+     x      sum(zoper(:))
          
       endif
       
@@ -217,9 +221,12 @@ c     calculate center-of-mass
 
 c     calculate dipole moment based on distance from center-of-mass        
         if(keycorr.eq.2)then
-          comx=xval
-          comy=yval
-          comz=zval
+c          comx=xval
+c          comy=yval
+c          comz=zval
+          comx=0.d0
+          comy=0.d0
+          comz=0.d0
 
           xval=0.d0
           yval=0.d0
@@ -322,20 +329,25 @@ c     get molecule position with minimum image convention
           endif
           
 c     get center-of-mass value          
-          if(keycorr.eq.1)then
+c          if(keycorr.eq.1)then
           do j=1,numsit(itmols)
             datx(k)=datx(k)+mass(j)*atmx(j)/molmass
             daty(k)=daty(k)+mass(j)*atmy(j)/molmass
             datz(k)=datz(k)+mass(j)*atmz(j)/molmass
           enddo
-          endif
+c          endif
 
 c     calculate dipole moment based on distance from center-of-mass        
           if(keycorr.eq.2)then
-            comx=datx(k)
-            comy=daty(k)
-            comz=daty(k)
-
+c            write(*,*) "atmx: ",atmx(:)
+c            write(*,*) "charge: ",charge(:)
+c          comx=xval
+c          comy=yval
+c          comz=zval
+          comx=0.d0
+          comy=0.d0
+          comz=0.d0
+c            write(*,*) "comx: ",comx
             datx(k)=0.d0
             daty(k)=0.d0
             datz(k)=0.d0
@@ -345,6 +357,21 @@ c     calculate dipole moment based on distance from center-of-mass
               daty(k)=daty(k)+charge(j)*(atmy(j)-comy)
               datz(k)=datz(k)+charge(j)*(atmz(j)-comz)
             enddo
+c            write(*,*) "datx: ",datx
+            comx=0.d0
+            comy=0.d0
+            comz=0.d0
+c            write(*,*) "comx: ",comx
+            datx(k)=0.d0
+            daty(k)=0.d0
+            datz(k)=0.d0
+
+            do j=1,numsit(itmols)
+              datx(k)=datx(k)+charge(j)*(atmx(j)-comx)
+              daty(k)=daty(k)+charge(j)*(atmy(j)-comy)
+              datz(k)=datz(k)+charge(j)*(atmz(j)-comz)
+            enddo
+c            write(*,*) "datx: ",datx
           
           endif
 

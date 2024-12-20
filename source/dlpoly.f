@@ -105,7 +105,7 @@ c     declare required modules
       logical stropt,lzero,nolink,newgau,lminim,lminnow,lhit,lbpd
       logical prechk,tadall,lexcite,lsolva,lfree,lfrmas,lswitch
       logical lghost,llswitch,lnfic,nebgo,lpsoc,redirect,lpimd
-      logical inhc,lmsite,lcorr,lfqcmd
+      logical inhc,lmsite,lcorr,lfqcmd,lfcmd
       
       integer npage,lines,idnode,mxnode,memr,intsta,istraj,nsbzdn
       integer keyens,keyfce,keyres,keytrj,kmax1,kmax2,kmax3,multt
@@ -117,7 +117,7 @@ c     declare required modules
       integer ntpter,keyshl,isw,keyver,keystr,keytol,numgau,khit
       integer nhit,keybpd,ntrack,nblock,blkout,numneb,nturn,mode
       integer natms2,ntghost,nsolva,isolva,nofic,iadd
-      integer nrespa,iqt4,keycorr,molcorr,wrtcorr
+      integer nrespa,iqt4,keycorr,molcorr,wrtcorr,wrtrdf
 
       real(8) alpha,delr,epsq,fmax,press,quattol,rcut,rprim,rvdw,taup
       real(8) taut,temp,timcls,timjob,tolnce,tstep,tzero,dlrpot,drewd
@@ -208,16 +208,16 @@ c     input the control parameters defining the simulation
      x  (seek,lfcap,lgofr,lnsq,loptim,lzero,lminim,lpgr,ltraj,ltscal,
      x  lzeql,lzden,nolink,newgau,lhit,lbpd,ltad,lneb,prechk,tadall,
      x  lsolva,lfree,lfrmas,lexcite,lswitch,lghost,lnfic,nebgo,lpsoc,
-     x  lpimd,inhc,lmsite,lcorr,lfqcmd,idnode,minstp,intsta,istraj,
-     x  keybpd,keyens,keyfce,keyres,keyver,keytrj,keycorr,molcorr,
-     x  wrtcorr,kmax1,kmax2,
+     x  lpimd,inhc,lmsite,lcorr,lfqcmd,lfcmd,idnode,minstp,intsta,
+     x  istraj,keybpd,keyens,keyfce,keyres,keyver,keytrj,keycorr,
+     x  molcorr,wrtcorr,kmax1,kmax2,
      x  kmax3,multt,nstack,nstbgr,nsbzdn,nstbpo,nhko,nlatt,nstbts,
      x  nsteql,nstraj,nstrun,nospl,keytol,numgau,khit,nhit,nblock,
      x  ntrack,blkout,numneb,mode,nsolva,isolva,nofic,nbeads,nchain,
      x  nrespa,g_qt4f,alpha,delr,epsq,fmax,press,quattol,rcut,rprim,
      x  rvdw,taup,taut,temp,timcls,timjob,tolnce,tstep,rlxtol,opttol,
      x  zlen,ehit,xhit,yhit,zhit,ebias,vmin,catchrad,sprneb,deltad,tlow,
-     x  hyp_units,chi,nsp1)
+     x  hyp_units,chi,nsp1,wrtrdf)
 
 c *******************************************************************      
 c     M.R.Momeni & F.A.Shakib
@@ -389,11 +389,11 @@ c      write(*,*) "engbnd ", engbnd
 c      call allocate_fqcmd_arrays(idnode,mxnode)
 c      call read_pot_tables(idnode,mxnode)
 c      write(*,*) "fqcmd test start"
-      nqcbnd=1
-      nqcang=1
+c      nqcbnd=1
+c      nqcang=1
       if(lfqcmd) then
         call fqcmd_setup(idnode,mxnode,natms,
-     x  ntbond,ntangl,ntpatm,lpimd)
+     x  ntbond,ntangl,ntpatm,ntpmls,lpimd)
       endif
 c      if(lfqcmd.and.nstep.gt.nsteql) then
 c      if(lfqcmd) then
@@ -956,11 +956,12 @@ c     calculate correlation function
      x      nummols,numsit,tstep) 
         endif
       
-      if(lfqcmd.and.nstep.gt.nsteql) then
+      if((lfqcmd.and.nstep.gt.nsteql)
+     x  .and.(mod(nstep,wrtrdf).eq.0)) then
         call  get_qcent_internal(idnode,mxnode,imcon,natms,
-     x  ntbond,ntangl,ntpmls,rcut)
+     x  ntbond,ntangl,ntpmls,rcut,lfcmd)
         call get_qcent_cart(idnode,mxnode,imcon,
-     x  ntpmls,natms,ntbond,rcut,lpimd)
+     x  ntpmls,natms,ntbond,rcut,lpimd,lfcmd)
       endif
 
 c     calculate physical quantities
@@ -1182,7 +1183,7 @@ c     write pimd thermostats file
      
       if(lfqcmd) then 
       call write_fqcmd_rdfs(idnode,mxnode,nsteql,nstrun,rcut,volm,
-     x  temp,lpimd)
+     x  temp,lpimd,ntpatm,wrtrdf)
       endif
 c     close output channels
       
