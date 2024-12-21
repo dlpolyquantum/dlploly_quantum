@@ -1,5 +1,11 @@
 50
 480
-1
-1
-3
+5
+8
+15
+
+!number of trajectories to average
+!number of points in RDFs
+!number of bonds in Average_Intra.d
+!number of angles in Average_Angle.d
+!number of RDFs in Average_RDF.d

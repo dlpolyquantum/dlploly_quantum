@@ -17,11 +17,10 @@ cp ../../zero-pot/Potential.dat ../Previous_Potential.dat
 for k in $(seq -f "%03g" 1 50)
 do
 	mkdir traj${k}
-#	cp base_input/* traj${k}/
 	cp run_dlpoly_fqcmd.sh traj${k}/
 	cp ../../config/CONFIG${k} traj${k}/CONFIG 
 	cd traj${k}
-	sbatch -J it${i}-${k} run_dlpoly_bridges2.sh
+	sbatch -J it${i}-${k} run_dlpoly_fqcmd.sh
 	cd ../
 done	
 cd ../../	

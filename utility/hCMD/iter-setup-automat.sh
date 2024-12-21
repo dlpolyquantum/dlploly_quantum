@@ -42,7 +42,7 @@ for k in $(seq -f "%03g" 1 ${ntraj})
 do
 	mkdir traj${k}
 	cp ../../base_scripts/run_dlpoly_fqcmd.sh traj${k}/
-	cp ../../ref/run/traj${k}/CONFIG traj${k}/ 
+	cp ../../config/CONFIG${k} traj${k}/CONFIG 
 done
 
 if [ "$i" -eq "$int_itr" ]; then

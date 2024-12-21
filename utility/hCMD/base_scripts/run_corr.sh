@@ -1,10 +1,8 @@
 #!/bin/bash
 #SBATCH -N 1
 #SBATCH -p RM-shared
-#SBATCH --time 48:00:00
+#SBATCH --time 1:00:00
 #SBATCH --ntasks-per-node 1
-#SBATCH --mail-user=nlondon@umkc.edu
-#SBATCH --mail-type=FAIL
 
 module purge
 module load intel-mpi

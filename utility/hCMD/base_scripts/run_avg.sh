@@ -1,16 +1,9 @@
-#!/bin/bash
-#SBATCH -N 1
+#!/bin/bash -l
+#SBATCH --job-name=avgRDF
+#SBATCH --nodes=1
 #SBATCH -p RM-shared
-#SBATCH --time 48:00:00
 #SBATCH --ntasks-per-node 1
-#SBATCH --mail-user=nlondon@umkc.edu
-#SBATCH --mail-type=FAIL
-
-
-module purge
-module load intel-mpi
-module load fftw
-module list
+#SBATCH --time=0-00:10:00
 
 set -x 
 echo JOB STARTED AT:
@@ -20,7 +13,7 @@ echo JOB STARTED AT:
 [ -e Average_Angle.d ] && rm Average_Angle.d 
 [ -e Average_RDF.d ] && rm Average_RDF.d 
 
-export EXE=/jet/home/nl478/programs/rdfAvg/rdfAvg
+export EXE=/jet/home/limbu/Softwares/codes/programs/rdfAvg/rdfAvg
 #mpiexec.hydra -bootstrap sge $EXE
 $EXE
 

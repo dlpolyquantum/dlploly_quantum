@@ -1,14 +1,10 @@
-#!/bin/bash -I
-#SBATCH --job-name=runAVG
-#SBATCH --output=myoutput%j.out
-#SBATCH --error=jobError.out
-#SBATCH --time=0:05:00
-#SBATCH -p RM-shared
+#!/bin/bash -l
+#SBATCH --job-name=copyFiles
 #SBATCH -N 1
+#SBATCH -p RM-shared
+#SBATCH --time 00:10:00
 #SBATCH --ntasks-per-node 1
-#SBATCH --mem-per-cpu=2000M
-#SBATCH --mail-type=fail
-#SBATCH --mail-user=nlondon@umkc.edu
+
 
 echo JOB STARTED AT:
  date
@@ -28,7 +24,7 @@ do
 	cp base_input/* ${k}/
 done
 
-sleep 10
+sleep 5
 
 echo JOB FINISHED AT:
  date

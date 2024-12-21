@@ -1,0 +1,27 @@
+FQCMD params
+TFSI
+bonds 4
+  harm 4
+  harm 6
+  harm 2
+  harm 2
+angles 7
+  harm 4
+  harm 2
+  harm 4
+  harm 6
+  harm 6
+  harm 2
+  harm 1
+finish
+Li-ion
+bonds 0
+angles 0
+finish
+H2O
+bonds 1
+  quar 2
+angles 1
+  harm 1
+finish
+CLOSE
