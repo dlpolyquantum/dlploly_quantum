@@ -14,7 +14,8 @@ echo JOB STARTED AT:
 
 #Set to filepath of DLPOLY.X
 #export EXE=
-export EXE=/jet/home/limbu/Softwares/dlpoly_quantum_v2/execute/DLPOLY2fqcmd.X
+export EXE=/jet/home/limbu/Softwares/dlpoly_quantum_v2/execute/DLPOLY.X
+
 mpiexec.hydra -bootstrap sge $EXE
 
 echo JOB FINISHED AT:
